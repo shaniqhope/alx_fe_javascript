@@ -83,7 +83,7 @@ async function syncQuotes() {
   filterQuotes();
 
   // Notify the user
-  notifySyncSuccess('Quotes synced with server!');
+  alert('Quotes synced with server!');
 }
 
   document.getElementById('sync-status').innerText = 'Data synced successfully!';
