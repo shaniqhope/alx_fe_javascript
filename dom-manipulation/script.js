@@ -1,10 +1,6 @@
-// Step 2: Initial Setup
-
 // Simulate a mock server with JSONPlaceholder
-const API_URL = 'https://jsonplaceholder.typicode.com/posts'; // Server endpoint for simulation
+const API_URL = 'https://jsonplaceholder.typicode.com/posts'; // Mock API for quotes
 let localSyncInterval;
-
-// Array of quotes (loaded from localStorage or populated with initial quotes)
 let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   { text: "The journey of a thousand miles begins with one step.", category: "Inspiration" },
   { text: "Life is what happens when you're busy making other plans.", category: "Life" },
@@ -59,73 +55,70 @@ function filterQuotes() {
   }
 }
 
-// Function to add a new quote
-function addQuote(newQuoteText, newQuoteCategory) {
-  quotes.push({ text: newQuoteText, category: newQuoteCategory });
+// Fetch quotes from the server
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch(API_URL);
+    const serverQuotes = await response.json();
+    return serverQuotes.map(item => ({ text: item.title, category: "General" }));
+  } catch (error) {
+    console.error('Error fetching quotes from the server:', error);
+    return [];
+  }
+}
+
+// Sync quotes between local and server
+async function syncQuotes() {
+  const serverQuotes = await fetchQuotesFromServer();
+
+  // Merge server quotes with local quotes (without duplicates)
+  serverQuotes.forEach(serverQuote => {
+    if (!quotes.some(localQuote => localQuote.text === serverQuote.text)) {
+      quotes.push(serverQuote);
+    }
+  });
+
   saveQuotes();
   populateCategories();
   filterQuotes();
+
+  document.getElementById('sync-status').innerText = 'Data synced successfully!';
 }
 
-// Sync data with server
-async function syncWithServer() {
+// Post a new quote to the server (simulated)
+async function postQuoteToServer(quote) {
   try {
-    // Fetch data from the server (simulated)
-    const response = await fetch(API_URL);
-    const serverQuotes = await response.json();
-    
-    // Simulate conflict resolution (Server data takes precedence)
-    if (serverQuotes.length > quotes.length) {
-      alert("Server data has been updated. Syncing with local data.");
-      quotes = serverQuotes.map(item => ({ text: item.title, category: "General" })); // Mock categories for now
-      saveQuotes();
-      populateCategories();
-      filterQuotes();
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: quote.text })
+    });
+
+    if (response.ok) {
+      console.log('Quote posted to server successfully.');
+    } else {
+      console.error('Failed to post quote to the server.');
     }
-    
-    document.getElementById('sync-status').innerText = 'Data synced successfully!';
   } catch (error) {
-    console.error('Error syncing with server:', error);
-    document.getElementById('sync-status').innerText = 'Error syncing with server!';
+    console.error('Error posting quote to the server:', error);
   }
+}
+
+// Add a new quote and sync it to the server
+function addQuote(newQuoteText, newQuoteCategory) {
+  const newQuote = { text: newQuoteText, category: newQuoteCategory };
+  quotes.push(newQuote);
+  saveQuotes();
+  populateCategories();
+  filterQuotes();
+
+  // Post the new quote to the server
+  postQuoteToServer(newQuote);
 }
 
 // Periodically sync with the server every 30 seconds
 function startSync() {
-  localSyncInterval = setInterval(syncWithServer, 30000); // 30 seconds
-}
-
-// UI for exporting quotes as JSON
-function exportQuotesToJson() {
-  const quotesJson = JSON.stringify(quotes);
-  const blob = new Blob([quotesJson], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'quotes.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-
-// Import quotes from JSON file
-function importFromJsonFile(event) {
-  const fileReader = new FileReader();
-  
-  fileReader.onload = function(event) {
-    try {
-      const importedQuotes = JSON.parse(event.target.result);
-      quotes.push(...importedQuotes);
-      saveQuotes();
-      populateCategories();
-      alert('Quotes imported successfully!');
-    } catch (error) {
-      alert('Error parsing JSON file.');
-    }
-  };
-  
-  fileReader.readAsText(event.target.files[0]);
+  localSyncInterval = setInterval(syncQuotes, 30000); // 30 seconds
 }
 
 // Load existing quotes and start sync on page load
@@ -139,3 +132,4 @@ document.addEventListener('DOMContentLoaded', () => {
   // Start server sync
   startSync();
 });
+
