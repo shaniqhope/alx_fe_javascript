@@ -14,122 +14,68 @@ function saveQuotes() {
 
 // Function to display a random quote
 function showRandomQuote() {
-  const randomIndex = Math.floor(Math.random() * quotes.length);
-  const randomQuote = quotes[randomIndex];
-  document.getElementById('quoteDisplay').innerHTML = `<p>"${randomQuote.text}" - ${randomQuote.category}</p>`;
-}
-
-// Populate categories dynamically from quotes
-function populateCategories() {
-  const categories = [...new Set(quotes.map(quote => quote.category))];
-  const categoryFilter = document.getElementById('categoryFilter');
-  
-  categoryFilter.innerHTML = '<option value="all">All Categories</option>';
-  categories.forEach(category => {
-    const option = document.createElement('option');
-    option.value = category;
-    option.textContent = category;
-    categoryFilter.appendChild(option);
-  });
-  
-  const savedCategory = localStorage.getItem('selectedCategory');
-  if (savedCategory) {
-    categoryFilter.value = savedCategory;
-    filterQuotes();
-  }
-}
-
-// Filter quotes based on selected category
-function filterQuotes() {
-  const selectedCategory = document.getElementById('categoryFilter').value;
-  localStorage.setItem('selectedCategory', selectedCategory);
-  
-  const filteredQuotes = selectedCategory === 'all' ? quotes : quotes.filter(quote => quote.category === selectedCategory);
-  
-  if (filteredQuotes.length > 0) {
-    const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
-    const randomQuote = filteredQuotes[randomIndex];
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    const randomQuote = quotes[randomIndex];
     document.getElementById('quoteDisplay').innerHTML = `<p>"${randomQuote.text}" - ${randomQuote.category}</p>`;
-  } else {
-    document.getElementById('quoteDisplay').innerHTML = '<p>No quotes available for this category.</p>';
   }
-}
-
-// Fetch quotes from the server
-async function fetchQuotesFromServer() {
-  try {
-    const response = await fetch(API_URL);
-    const serverQuotes = await response.json();
-    return serverQuotes.map(item => ({ text: item.title, category: "General" }));
-  } catch (error) {
-    console.error('Error fetching quotes from the server:', error);
-    return [];
+  
+  // Function to notify user that quotes were synced successfully
+  function notifySyncSuccess() {
+    const syncNotification = document.getElementById('sync-status');
+    
+    // Display the notification message
+    syncNotification.innerText = 'Quotes synced with server!';
+    syncNotification.style.display = 'block';
+    
+    // Hide the notification after 3 seconds
+    setTimeout(() => {
+      syncNotification.style.display = 'none';
+    }, 3000);
   }
-}
-
-// Sync quotes between local and server
-async function syncQuotes() {
-  const serverQuotes = await fetchQuotesFromServer();
-
-  // Merge server quotes with local quotes (without duplicates)
-  serverQuotes.forEach(serverQuote => {
-    if (!quotes.some(localQuote => localQuote.text === serverQuote.text)) {
-      quotes.push(serverQuote);
+  
+  // Fetch quotes from the server
+  async function fetchQuotesFromServer() {
+    try {
+      const response = await fetch(API_URL);
+      const serverQuotes = await response.json();
+      return serverQuotes.map(item => ({ text: item.title, category: "General" }));
+    } catch (error) {
+      console.error('Error fetching quotes from the server:', error);
+      return [];
     }
-  });
-
-  saveQuotes();
-  populateCategories();
-  filterQuotes();
-
-  document.getElementById('sync-status').innerText = 'Data synced successfully!';
-}
-
-// Post a new quote to the server (simulated)
-async function postQuoteToServer(quote) {
-  try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: quote.text })
+  }
+  
+  // Sync quotes between local and server
+  async function syncQuotes() {
+    const serverQuotes = await fetchQuotesFromServer();
+  
+    // Merge server quotes with local quotes (without duplicates)
+    serverQuotes.forEach(serverQuote => {
+      if (!quotes.some(localQuote => localQuote.text === serverQuote.text)) {
+        quotes.push(serverQuote);
+      }
     });
-
-    if (response.ok) {
-      console.log('Quote posted to server successfully.');
-    } else {
-      console.error('Failed to post quote to the server.');
-    }
-  } catch (error) {
-    console.error('Error posting quote to the server:', error);
+  
+    saveQuotes();
+    populateCategories();
+    filterQuotes();
+  
+    // Notify the user
+    notifySyncSuccess();
   }
-}
-
-// Add a new quote and sync it to the server
-function addQuote(newQuoteText, newQuoteCategory) {
-  const newQuote = { text: newQuoteText, category: newQuoteCategory };
-  quotes.push(newQuote);
-  saveQuotes();
-  populateCategories();
-  filterQuotes();
-
-  // Post the new quote to the server
-  postQuoteToServer(newQuote);
-}
-
-// Periodically sync with the server every 30 seconds
-function startSync() {
-  localSyncInterval = setInterval(syncQuotes, 30000); // 30 seconds
-}
-
-// Load existing quotes and start sync on page load
-document.addEventListener('DOMContentLoaded', () => {
-  populateCategories();
-  filterQuotes();
   
-  document.getElementById('exportQuotes').addEventListener('click', exportQuotesToJson);
-  document.getElementById('importFile').addEventListener('change', importFromJsonFile);
+  // Add the rest of your functions here as needed
   
-  // Start server sync
-  startSync();
-});
+  // Load existing quotes and start sync on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    populateCategories();
+    filterQuotes();
+    
+    document.getElementById('exportQuotes').addEventListener('click', exportQuotesToJson);
+    document.getElementById('importFile').addEventListener('change', importFromJsonFile);
+    
+    // Start server sync
+    startSync();
+  });
+  
 
