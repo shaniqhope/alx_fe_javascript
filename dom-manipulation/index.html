@@ -7,18 +7,23 @@
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
+
   <select id="categoryFilter" onchange="filterQuotes()">
     <option value="all">All Categories</option>
-    <!-- Dynamically populated categories will appear here -->
   </select>
+  
   <div id="quoteDisplay"></div>
+  
   <button id="newQuote">Show New Quote</button>
   <button id="exportQuotes">Export Quotes as JSON</button>
   <input type="file" id="importFile" accept=".json" />
   
+  <div id="sync-status"></div> <!-- New UI element to show sync status -->
+  
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
