@@ -15,7 +15,13 @@ ddocument.addEventListener('DOMContentLoaded', () => {
         const storedQuotes = JSON.parse(localStorage.getItem('quotes') || '[]');
         storedQuotes.forEach(addQuoteToDOM);
     }
+    function displayRandomQuote() {
+        const storedQuotes = JSON.parse(localStorage.getItem('quotes') || '[]');
 
+        if (storedQuotes.length === 0) {
+            document.getElementById('random-quote').textContent = 'No quotes available.';
+            return;
+        }
     function addQuoteToDOM(quoteObj) {
         const li = document.createElement('li');
         li.innerHTML = `
@@ -63,14 +69,6 @@ ddocument.addEventListener('DOMContentLoaded', () => {
             alert('Please enter a quote, author, and category.');
         }
     }
-
-    function displayRandomQuote() {
-        const storedQuotes = JSON.parse(localStorage.getItem('quotes') || '[]');
-
-        if (storedQuotes.length === 0) {
-            document.getElementById('random-quote').textContent = 'No quotes available.';
-            return;
-        }
 
         const randomIndex = Math.floor(Math.random() * storedQuotes.length);
         const randomQuote = storedQuotes[randomIndex];
