@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const quoteInput = document.getElementById('quote');
     const authorInput = document.getElementById('author');
+    const categoryInput = document.getElementById('category'); // New category input
     const addQuoteBtn = document.getElementById('add-quote-btn');
     const quoteList = document.getElementById('quote-list');
 
@@ -11,11 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
     addQuoteBtn.addEventListener('click', () => {
         const quoteText = quoteInput.value.trim();
         const authorText = authorInput.value.trim();
+        const categoryText = categoryInput.value.trim(); // Get category value
 
-        if (quoteText && authorText) {
+        if (quoteText && authorText && categoryText) { // Validate that category is also entered
             const newQuote = {
-                quote: quoteText,
+                text: quoteText,
                 author: authorText,
+                category: categoryText, // Add category to the object
             };
 
             // Add the new quote to the list and local storage
@@ -25,8 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Clear the input fields
             quoteInput.value = '';
             authorInput.value = '';
+            categoryInput.value = ''; // Clear category input field
         } else {
-            alert('Please enter both a quote and an author.');
+            alert('Please enter a quote, author, and category.');
         }
     });
 
@@ -40,11 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function addQuoteToDOM(quoteObj) {
         const li = document.createElement('li');
         li.innerHTML = `
-            "${quoteObj.quote}" - ${quoteObj.author}
+            "${quoteObj.text}" - ${quoteObj.author} [Category: ${quoteObj.category}]
             <button class="remove-btn">Remove</button>
         `;
         li.querySelector('.remove-btn').addEventListener('click', () => {
-            removeQuote(quoteObj.quote);
+            removeQuote(quoteObj.text);
             li.remove();
         });
         quoteList.appendChild(li);
@@ -60,7 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Remove quote from local storage
     function removeQuote(quoteText) {
         let storedQuotes = JSON.parse(localStorage.getItem('quotes') || '[]');
-        storedQuotes = storedQuotes.filter(quote => quote.quote !== quoteText);
+        storedQuotes = storedQuotes.filter(quote => quote.text !== quoteText);
         localStorage.setItem('quotes', JSON.stringify(storedQuotes));
     }
 });
+
