@@ -82,6 +82,10 @@ async function syncQuotes() {
   populateCategories();
   filterQuotes();
 
+  // Notify the user
+  notifySyncSuccess();
+}
+
   document.getElementById('sync-status').innerText = 'Data synced successfully!';
 }
 
