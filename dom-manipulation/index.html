@@ -1,30 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Quote Generator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Quote Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        #quoteDisplay {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        #sync-status {
+            margin-top: 10px;
+            font-size: 14px;
+            color: green;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <h1>Dynamic Quote Generator</h1>
+    <h1>Dynamic Quote Generator</h1>
+    
+    <div id="quoteDisplay"></div>
+    
+    <button id="newQuote">Show New Quote</button>
 
-  <select id="categoryFilter" onchange="filterQuotes()">
-    <option value="all">All Categories</option>
-  </select>
-  
-  <div id="quoteDisplay"></div>
-  
-  <button id="newQuote">Show New Quote</button>
-  <button id="exportQuotes">Export Quotes as JSON</button>
-  <input type="file" id="importFile" accept=".json" />
-  
-  <div id="sync-status"></div> <!-- New UI element to show sync status -->
-  
-  <div id="sync-status" style="display: none; color: green; font-weight: bold;"></div>
+    <div>
+        <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+        <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+        <button id="addQuoteBtn">Add Quote</button>
+    </div>
 
-  <script src="script.js"></script>
+    <div>
+        <select id="categoryFilter">
+            <option value="all">All Categories</option>
+            <!-- Categories will be dynamically populated -->
+        </select>
+    </div>
+
+    <div id="sync-status">Quotes synced with server!</div>
+
+    <div>
+        <button id="exportQuotes">Export Quotes</button>
+        <input type="file" id="importFile" accept=".json" />
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
