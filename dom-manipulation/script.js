@@ -1,80 +1,44 @@
-ddocument.addEventListener('DOMContentLoaded', () => {
-    const quoteInput = document.getElementById('quote');
-    const authorInput = document.getElementById('author');
-    const categoryInput = document.getElementById('category');
-    const addQuoteBtn = document.getElementById('add-quote-btn');
-    const quoteList = document.getElementById('quote-list');
-    const showNewQuoteBtn = document.getElementById('show-new-quote-btn');
+// Step 2: Initial Setup
 
-    loadQuotes();
-
-    addQuoteBtn.addEventListener('click', addQuote);
-    showNewQuoteBtn.addEventListener('click', displayRandomQuote);
-
-    function loadQuotes() {
-        const storedQuotes = JSON.parse(localStorage.getItem('quotes') || '[]');
-        storedQuotes.forEach(addQuoteToDOM);
+// Array of quote objects
+const quotes = [
+    { text: "The journey of a thousand miles begins with one step.", category: "Inspiration" },
+    { text: "Life is what happens when you're busy making other plans.", category: "Life" },
+    { text: "Success is not the key to happiness. Happiness is the key to success.", category: "Success" }
+  ];
+  
+  // Function to show a random quote
+  function showRandomQuote() {
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    const randomQuote = quotes[randomIndex];
+    document.getElementById('quoteDisplay').textContent = `"${randomQuote.text}" - ${randomQuote.category}`;
+  }
+  
+  // Attach event listener to the "Show New Quote" button
+  document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+  
+  // Display a random quote when the page loads
+  document.addEventListener('DOMContentLoaded', showRandomQuote);
+  
+  // Function to add a new quote
+function addQuote() {
+    const newQuoteText = document.getElementById('newQuoteText').value.trim();
+    const newQuoteCategory = document.getElementById('newQuoteCategory').value.trim();
+  
+    if (newQuoteText && newQuoteCategory) {
+      // Add the new quote to the array
+      quotes.push({ text: newQuoteText, category: newQuoteCategory });
+  
+      // Clear input fields
+      document.getElementById('newQuoteText').value = '';
+      document.getElementById('newQuoteCategory').value = '';
+  
+      // Show feedback (optional)
+      alert('New quote added successfully!');
+    } else {
+      alert('Please enter both a quote and a category.');
     }
-    function displayRandomQuote() {
-        const storedQuotes = JSON.parse(localStorage.getItem('quotes') || '[]');
-
-        if (storedQuotes.length === 0) {
-            document.getElementById('random-quote').textContent = 'No quotes available.';
-            return;
-        }
-    function addQuoteToDOM(quoteObj) {
-        const li = document.createElement('li');
-        li.innerHTML = `
-            "${quoteObj.text}" - ${quoteObj.author} [Category: ${quoteObj.category}]
-            <button class="remove-btn">Remove</button>
-        `;
-        li.querySelector('.remove-btn').addEventListener('click', () => {
-            removeQuote(quoteObj.text);
-            li.remove();
-        });
-        quoteList.appendChild(li);
-    }
-
-    function saveQuoteToLocalStorage(quoteObj) {
-        const storedQuotes = JSON.parse(localStorage.getItem('quotes') || '[]');
-        storedQuotes.push(quoteObj);
-        localStorage.setItem('quotes', JSON.stringify(storedQuotes));
-    }
-
-    function removeQuote(quoteText) {
-        let storedQuotes = JSON.parse(localStorage.getItem('quotes') || '[]');
-        storedQuotes = storedQuotes.filter(quote => quote.text !== quoteText);
-        localStorage.setItem('quotes', JSON.stringify(storedQuotes));
-    }
-
-    function addQuote() {
-        const quoteText = quoteInput.value.trim();
-        const authorText = authorInput.value.trim();
-        const categoryText = categoryInput.value.trim(); 
-
-        if (quoteText && authorText && categoryText) {
-            const newQuote = {
-                text: quoteText,
-                author: authorText,
-                category: categoryText, 
-            };
-
-            addQuoteToDOM(newQuote);
-            saveQuoteToLocalStorage(newQuote);
-
-            quoteInput.value = '';
-            authorInput.value = '';
-            categoryInput.value = ''; 
-        } else {
-            alert('Please enter a quote, author, and category.');
-        }
-    }
-
-        const randomIndex = Math.floor(Math.random() * storedQuotes.length);
-        const randomQuote = storedQuotes[randomIndex];
-
-        document.getElementById('random-quote').textContent = `"${randomQuote.text}" - ${randomQuote.author} [Category: ${randomQuote.category}]`;
-    }
-});
+  }
+  
 
 

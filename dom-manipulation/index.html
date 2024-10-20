@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Favorite Quotes App</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Dynamic Quote Generator</title>
 </head>
 <body>
-    <div id="quote-app">
-        <h1>Favorite Quotes</h1>
-        <input type="text" id="quote" placeholder="Enter your quote" required>
-        <input type="text" id="author" placeholder="Enter the author" required>
-        <input type="text" id="category" placeholder="Enter the category" required> <!-- New category input -->
-        <button id="show-new-quote-btn">Show New Quote</button>
-<div id="random-quote"></div>
-
-
-        <h2>Saved Quotes</h2>
-        <ul id="quote-list">
-            <!-- Stored quotes will be displayed here -->
-        </ul>
+    <h1>Dynamic Quote Generator</h1>
+    
+    <!-- Placeholder for the dynamic quote -->
+    <div id="quoteDisplay"></div>
+    
+    <!-- Button to show a new quote -->
+    <button id="newQuote">Show New Quote</button>
+    
+    <!-- Inputs to add a new quote -->
+    <div>
+        <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+        <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+        <button onclick="addQuote()">Add Quote</button>
     </div>
+
+    <!-- Link to external JavaScript file -->
     <script src="script.js"></script>
 </body>
 </html>
+
 
